@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-Cell | Indian Institute of Technology Kharagpur</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* ========================== */
+        /* --- Design System --- */
+        /* ========================== */
+        :root {
+            --primary-accent: #ff6b00; /* Energetic Orange */
+            --secondary-accent: #4a90e2; /* Tech Blue */
+            --dark-bg: #0d1117;
+            --card-bg: rgba(22, 27, 34, 0.75);
+            --text-light: #e6edf3;
+            --text-muted: #8b949e;
+            --border-color: rgba(139, 148, 158, 0.3);
+            --font-family: 'Poppins', sans-serif;
+            --transition-speed: 0.4s;
+            --timing-function: cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        /* ========================== */
+        /* --- Global & Background --- */
+        /* ========================== */
+        * {
+            margin: 0; padding: 0; box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: var(--font-family);
+            background-color: var(--dark-bg);
+            color: var(--text-light);
+            min-height: 100vh;
+            position: relative;
+        }
+        
+        .background-container {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            overflow: hidden; z-index: -1;
+        }
+        .background-container::before, .background-container::after {
+            content: ''; position: absolute; width: 500px; height: 500px;
+            background: radial-gradient(circle, var(--primary-accent), transparent 60%);
+            border-radius: 50%; opacity: 0.15; filter: blur(100px);
+            animation: moveGradient 20s infinite alternate;
+        }
+        .background-container::after {
+            background: radial-gradient(circle, var(--secondary-accent), transparent 60%);
+            animation-delay: -10s; animation-direction: alternate-reverse;
+        }
+
+        @keyframes moveGradient {
+            0% { transform: translate(-40vw, -40vh); }
+            100% { transform: translate(40vw, 40vh); }
+        }
+
+        /* ========================== */
+        /* --- General Layout --- */
+        /* ========================== */
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        section {
+            padding: 100px 0;
+        }
+        h1, h2, h3 {
+            font-weight: 600;
+            color: #fff;
+        }
+        h1 { font-size: clamp(2.8rem, 6vw, 4.5rem); line-height: 1.1; }
+        h2 { font-size: clamp(2rem, 5vw, 2.8rem); text-align: center; margin-bottom: 60px; }
+        h3 { font-size: 1.5rem; }
+
+        /* ========================== */
+        /* --- Header & Navigation --- */
+        /* ========================== */
+        .site-header {
+            position: sticky; top: 0; width: 100%; z-index: 1000;
+            padding: 20px 0;
+            background: rgba(13, 17, 23, 0.8);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border-color);
+        }
+        .site-header .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logo {
+            height: 45px;
+        }
+        .main-nav ul {
+            display: flex; list-style: none; gap: 30px;
+        }
+        .main-nav a {
+            color: var(--text-muted); text-decoration: none; font-weight: 500;
+            transition: color 0.3s;
+        }
+        .main-nav a:hover, .main-nav a.active {
+            color: #fff;
+        }
+        
+        /* ========================== */
+        /* --- Hero Section --- */
+        /* ========================== */
+        .hero {
+            min-height: 80vh;
+            display: flex;
+            align-items: center;
+            text-align: center;
+        }
+        .hero p {
+            font-size: 1.25rem;
+            max-width: 700px;
+            margin: 20px auto 40px;
+            color: var(--text-muted);
+        }
+        .hero h1 span {
+            color: var(--primary-accent);
+        }
+        .cta-button {
+            background: var(--primary-accent);
+            color: #fff;
+            padding: 15px 35px;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: inline-block;
+            box-shadow: 0 0 20px rgba(255, 107, 0, 0.5);
+        }
+        .cta-button:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 10px 30px rgba(255, 107, 0, 0.6);
+        }
+
+        /* ========================== */
+        /* --- About Section (NEW) --- */
+        /* ========================== */
+        .about-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            align-items: center;
+        }
+        .about-card {
+            background: var(--card-bg);
+            padding: 40px;
+            border-radius: 15px;
+            border: 1px solid var(--border-color);
+            text-align: center;
+        }
+        .about-card img {
+            max-height: 120px;
+            margin-bottom: 20px;
+        }
+        .about-card h3 {
+            margin-bottom: 10px;
+        }
+        .about-card p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+
+        /* ========================== */
+        /* --- Initiatives Grid --- */
+        /* ========================== */
+        .initiatives-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+        .initiative-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 15px;
+            overflow: hidden;
+            text-decoration: none;
+            color: var(--text-light);
+            display: flex;
+            flex-direction: column;
+            transition: all 0.3s var(--timing-function);
+        }
+        .initiative-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--primary-accent);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+        }
+        .initiative-card img {
+            width: 100%; height: 200px; object-fit: cover;
+        }
+        .card-content {
+            padding: 25px;
+            flex-grow: 1;
+        }
+        .card-content h3 {
+            margin-bottom: 10px;
+            color: #fff;
+        }
+        .card-content p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+        .card-footer {
+            padding: 0 25px 25px;
+            font-weight: 500;
+            color: var(--secondary-accent);
+        }
+
+        /* ========================== */
+        /* --- Footer --- */
+        /* ========================== */
+        .site-footer {
+            padding: 50px 0;
+            text-align: center;
+            border-top: 1px solid var(--border-color);
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        /* ========================== */
+        /* --- Responsive Adjustments --- */
+        /* ========================== */
+        @media (max-width: 768px) {
+            .main-nav { display: none; /* Simplification for mobile */ }
+            section { padding: 60px 0; }
+            .about-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="background-container"></div>
+    
+    <!-- Header -->
+    <header class="site-header">
+        <div class="container">
+            <a href="#">
+                 <img src="https://www.lenseye.co/wp-content/uploads/2018/09/IMG-20180930-WA0178.jpg" alt="E-Cell IIT Kharagpur" class="logo">
+            </a>
+            <nav class="main-nav">
+                <ul>
+                    <li><a href="#" class="active">Home</a></li>
+                    <li><a href="task1-empresario/index.html">Empresario</a></li>
+                    <li><a href="task3-blog/index.html">Blog</a></li>
+                    <li><a href="#initiatives">Initiatives</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="container">
+                <h1>Where <span>Innovation</span> Meets Enterprise.</h1>
+                <p>Entrepreneurship Cell, IIT Kharagpur is a non-profit student organisation dedicated to fostering the spirit of entrepreneurship among students across India.</p>
+                <a href="task1-empresario/index.html" class="cta-button">Explore Empresario 2025</a>
+            </div>
+        </section>
+        
+        <!-- About Section -->
+        <section id="about">
+            <div class="container">
+                <h2>Our Legacy & Mission</h2>
+                <div class="about-grid">
+                    <div class="about-card">
+                                                <img src="https://www.iituk.org/wp-content/uploads/2021/07/IIT-Kgp-Logo-1160x560.png" alt="IIT Kharagpur Logo">
+                        <h3>Indian Institute of Technology, Kharagpur</h3>
+                        <p>Established in 1951, IIT Kharagpur is a beacon of academic excellence and innovation, nurturing some of the world's brightest minds and fostering a culture of research and development.</p>
+                    </div>
+                    <div class="about-card">
+                                                <img src="https://scontent.fdel29-1.fna.fbcdn.net/v/t39.30808-6/326430508_1146126316273277_973208645964617788_n.jpg?_nc_cat=110&ccb=1-7&_nc_sid=6ee11a&_nc_ohc=-5fmzm_KbQEQ7kNvwF947F1&_nc_oc=AdmGWcQl2dx9WwsuoRXoZLUzbnnjWqu9jRoLJPLVN7qRYwsxkASThwoBcQ61Gxm8_lY&_nc_zt=23&_nc_ht=scontent.fdel29-1.fna&_nc_gid=1pijpwmJzX-Gg3GisL0J_A&oh=00_AfbBqCS8HrPVQdCw3z7PdWSMJYTMuBc7tAZcMmc-YMeLzQ&oe=68C06FD1" alt="E-Cell Logo" style="max-height: 100px; margin-bottom: 40px;">
+                        <h3>The Entrepreneurship Cell</h3>
+                        <p>As one of the largest student-run bodies in the nation, we are the driving force for entrepreneurial activities on campus, providing the platform and resources to turn ideas into impactful ventures.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Initiatives Section -->
+        <section id="initiatives">
+            <div class="container">
+                <h2>Our Flagship Initiatives</h2>
+                <div class="initiatives-grid">
+
+                    <!-- Card 1: Empresario -->
+                    <a href="task1.html" class="initiative-card">
+                        <img src="https://placehold.co/600x400/0d1117/ff6b00?text=Empresario" alt="Empresario Initiative">
+                        <div class="card-content">
+                            <h3>Empresario Website</h3>
+                            <p>Discover our flagship global business model competition. A modern, accessible homepage built with pure HTML & CSS.</p>
+                        </div>
+                        <div class="card-footer">View Project &rarr;</div>
+                    </a>
+
+                    <!-- Card 2: Registration Form -->
+                    <a href="task2.html" class="initiative-card">
+                        <img src="https://placehold.co/600x400/0d1117/4a90e2?text=Join+Us" alt="Registration Form">
+                        <div class="card-content">
+                            <h3>Event Registration Portal</h3>
+                            <p>A sleek, responsive form with real-time validation and local storage persistence, designed for a seamless user experience.</p>
+                        </div>
+                        <div class="card-footer">View Project &rarr;</div>
+                    </a>
+
+                    <!-- Card 3: Blog -->
+                    <a href="task3.html" class="initiative-card">
+                        <img src="https://placehold.co/600x400/0d1117/e6edf3?text=Insights" alt="Founder's Playbook Blog">
+                        <div class="card-content">
+                            <h3>The Founder's Playbook</h3>
+                            <p>An engaging blog page featuring a responsive grid, mock comments, and a clean interface for sharing entrepreneurial insights.</p>
+                        </div>
+                        <div class="card-footer">View Project &rarr;</div>
+                    </a>
+
+                    <!-- Card 4: Calculator -->
+                    <a href="task4.html" class="initiative-card">
+                        <img src="https://placehold.co/600x400/0d1117/ffffff?text=123+" alt="Growth Engine Calculator">
+                        <div class="card-content">
+                            <h3>Growth Engine Calculator</h3>
+                            <p>A feature-rich web app with scientific functions, theme toggling, history, and AI-powered metric analysis via the Gemini API.</p>
+                        </div>
+                        <div class="card-footer">View Project &rarr;</div>
+                    </a>
+
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+        <div class="container">
+            <p>&copy; 2025 E-Cell, IIT Kharagpur. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+</body>
+</html>
+

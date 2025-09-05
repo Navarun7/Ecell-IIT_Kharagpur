@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Build Your Legacy | Empresario Registration</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* ========================== */
+        /* --- Design System --- */
+        /* ========================== */
+        :root {
+            --primary-accent: #ff6b00; /* Energetic Orange */
+            --secondary-accent: #4a90e2; /* Tech Blue */
+            --dark-bg: #0d1117;
+            --card-bg: rgba(22, 27, 34, 0.7);
+            --text-light: #e6edf3;
+            --text-muted: #8b949e;
+            --border-color: rgba(139, 148, 158, 0.3);
+            --success-color: #2ea043;
+            --error-color: #f85149;
+            --font-family: 'Poppins', sans-serif;
+            --transition-speed: 0.4s;
+        }
+
+        /* ========================== */
+        /* --- Global & Background --- */
+        /* ========================== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-family);
+            background-color: var(--dark-bg);
+            color: var(--text-light);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+            overflow: hidden; /* Hide overflow for background shapes */
+            position: relative;
+        }
+
+        /* Animated Gradient Background */
+        body::before, body::after {
+            content: '';
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, var(--primary-accent), transparent 60%);
+            border-radius: 50%;
+            opacity: 0.15;
+            filter: blur(100px);
+            z-index: -1;
+            animation: moveGradient 20s infinite alternate;
+        }
+        body::after {
+            background: radial-gradient(circle, var(--secondary-accent), transparent 60%);
+            animation-delay: -10s;
+            animation-direction: alternate-reverse;
+        }
+
+        @keyframes moveGradient {
+            0% { transform: translate(-40vw, -40vh) rotate(0deg) scale(1); }
+            100% { transform: translate(40vw, 40vh) rotate(360deg) scale(1.5); }
+        }
+
+        /* ========================== */
+        /* --- Main Layout --- */
+        /* ========================== */
+        .main-container {
+            width: 100%;
+            max-width: 900px;
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            overflow: hidden;
+        }
+
+        /* ========================== */
+        /* --- Info Panel (Right) --- */
+        /* ========================== */
+        .info-panel {
+            padding: 50px;
+            background: rgba(0, 0, 0, 0.2);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .info-panel .logo {
+            max-width: 100px;
+            margin-bottom: 30px;
+        }
+        .info-panel h2 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 15px;
+            line-height: 1.3;
+        }
+        .info-panel p {
+            color: var(--text-muted);
+            margin-bottom: 20px;
+        }
+        .info-panel ul {
+            list-style: none;
+            padding-left: 0;
+        }
+        .info-panel li {
+            color: var(--text-light);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+        }
+        .info-panel li::before {
+            content: '✓';
+            color: var(--primary-accent);
+            font-weight: bold;
+            margin-right: 10px;
+            font-size: 1.2rem;
+        }
+
+        /* ========================== */
+        /* --- Form Container (Left) --- */
+        /* ========================== */
+        .form-content {
+            padding: 50px;
+            position: relative;
+            overflow: hidden;
+        }
+        .form-header h1 {
+            color: #fff;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        .form-header p {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-bottom: 30px;
+        }
+
+        /* Floating Labels & Form Elements */
+        .form-group {
+            position: relative;
+            margin-bottom: 25px;
+        }
+
+        .form-input, .form-select {
+            width: 100%;
+            padding: 14px 15px;
+            background-color: transparent;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-light);
+            font-family: var(--font-family);
+            font-size: 1rem;
+            transition: border-color var(--transition-speed);
+        }
+
+        .form-label {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            color: var(--text-muted);
+            pointer-events: none;
+            transition: all var(--transition-speed) ease;
+        }
+
+        .form-input:focus ~ .form-label,
+        .form-input:not(:placeholder-shown) ~ .form-label {
+            top: -10px;
+            left: 10px;
+            font-size: 0.8rem;
+            padding: 0 5px;
+            background-color: #161b22; /* Match form content bg */
+            color: var(--primary-accent);
+        }
+
+        .form-input:focus, .form-select:focus {
+            outline: none;
+            border-color: var(--primary-accent);
+        }
+        
+        /* Select styling */
+        .form-select {
+            -webkit-appearance: none; appearance: none;
+            background-image: url('data:image/svg+xml;utf8,<svg fill="%238b949e" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/><path d="M0 0h24v24H0z" fill="none"/></svg>');
+            background-repeat: no-repeat;
+            background-position: right 15px top 50%;
+        }
+        /* For select, label moves when a value is selected */
+        .form-group select:focus ~ .form-label,
+        .form-group select:valid ~ .form-label {
+            top: -10px; left: 10px; font-size: 0.8rem; padding: 0 5px;
+            background-color: #161b22; color: var(--primary-accent);
+        }
+
+        /* Validation Styles */
+        .error-message {
+            color: var(--error-color); font-size: 0.8rem; margin-top: 5px;
+            height: 1.2em; visibility: hidden; opacity: 0; transition: opacity 0.3s;
+        }
+        .error-message.visible { visibility: visible; opacity: 1; }
+        .form-input.invalid, .form-select.invalid { border-color: var(--error-color); }
+        
+        /* Submit Button */
+        .submit-btn {
+            width: 100%; padding: 15px; background: var(--primary-accent);
+            border: none; border-radius: 8px; color: #fff; font-family: var(--font-family);
+            font-size: 1.1rem; font-weight: 600; cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .submit-btn:hover:not(:disabled) {
+            background-color: #e05a00; transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(255, 107, 0, 0.3);
+        }
+        .submit-btn:disabled { background-color: #555; cursor: not-allowed; opacity: 0.7; }
+
+        /* Confirmation Panel */
+        .confirmation-panel {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: #161b22; display: flex; flex-direction: column;
+            justify-content: center; align-items: center; text-align: center; padding: 20px;
+            transform: translateY(100%); transition: transform 0.5s ease-in-out; visibility: hidden;
+        }
+        .confirmation-panel.visible { transform: translateY(0); visibility: visible; }
+        .checkmark {
+            width: 80px; height: 80px; border-radius: 50%; background-color: var(--success-color);
+            display: flex; justify-content: center; align-items: center;
+            margin-bottom: 20px; font-size: 2.5rem; color: #fff;
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 850px) {
+            .main-container { grid-template-columns: 1fr; max-width: 500px; }
+            .info-panel { display: none; }
+            .form-content, .info-panel { padding: 40px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="main-container">
+        
+        <!-- Form Content (Left) -->
+        <div class="form-content">
+            <form id="registrationForm">
+                <div class="form-header">
+                    <h1>The Journey Starts Here</h1>
+                    <p>Register your idea for Empresario and take the first step towards building your legacy.</p>
+                </div>
+
+                <div class="form-group">
+                    <input type="text" id="name" name="name" class="form-input" placeholder=" " required>
+                    <label for="name" class="form-label">Full Name</label>
+                    <div class="error-message" id="nameError">Name is required.</div>
+                </div>
+
+                <div class="form-group">
+                    <input type="email" id="email" name="email" class="form-input" placeholder=" " required>
+                    <label for="email" class="form-label">Email Address</label>
+                    <div class="error-message" id="emailError">Please enter a valid email.</div>
+                </div>
+
+                <div class="form-group">
+                    <input type="tel" id="phone" name="phone" class="form-input" placeholder=" " required>
+                    <label for="phone" class="form-label">Phone Number</label>
+                    <div class="error-message" id="phoneError">Must be 10 digits.</div>
+                </div>
+                
+                <div class="form-group">
+                     <!-- The label for select needs to be outside the input for the CSS to work -->
+                    <label for="department" class="form-label">Department</label>
+                    <select id="department" name="department" class="form-select" required>
+                        <option value="" disabled selected></option>
+                        <option value="cs">Computer Science & Engineering</option>
+                        <option value="ec">Electronics & ECE</option>
+                        <option value="me">Mechanical Engineering</option>
+                        <option value="ch">Chemical Engineering</option>
+                        <option value="ce">Civil Engineering</option>
+                        <option value="ma">Mathematics</option>
+                        <option value="ot">Other</option>
+                    </select>
+                    <div class="error-message" id="departmentError">Please select a department.</div>
+                </div>
+
+                <button type="submit" class="submit-btn" id="submitBtn" disabled>Claim Your Spot</button>
+            </form>
+            
+            <div class="confirmation-panel" id="confirmationPanel">
+                <div class="checkmark">&#10003;</div>
+                <h2>Registration Successful!</h2>
+                <p id="confirmationMessage">Thanks for registering!</p>
+            </div>
+        </div>
+
+        <!-- Info Panel (Right) -->
+        <div class="info-panel">
+            <!-- You would replace this src with your actual E-Cell/IIT KGP logo file -->
+            <img src="https://www.lenseye.co/wp-content/uploads/2018/09/IMG-20180930-WA0178.jpg" alt="E-Cell IIT Kharagpur" class="logo">
+            <h2>From Idea to IPO.</h2>
+            <p>Empresario is more than a competition; it's a complete ecosystem to nurture your groundbreaking idea.</p>
+            <ul>
+                <li>World-class Mentorship</li>
+                <li>Access to Funding</li>
+                <li>Global Networking</li>
+                <li>Real-world Validation</li>
+            </ul>
+        </div>
+
+    </div>
+
+    <script>
+        // --- This JavaScript is identical to the previous version and works perfectly. ---
+        // --- It handles all validation, masking, and submission logic. ---
+        document.addEventListener('DOMContentLoaded', () => {
+            const form = document.getElementById('registrationForm');
+            const submitBtn = document.getElementById('submitBtn');
+            const confirmationPanel = document.getElementById('confirmationPanel');
+            
+            const fields = {
+                name: document.getElementById('name'),
+                email: document.getElementById('email'),
+                phone: document.getElementById('phone'),
+                department: document.getElementById('department'),
+            };
+
+            const errorMessages = {
+                name: document.getElementById('nameError'),
+                email: document.getElementById('emailError'),
+                phone: document.getElementById('phoneError'),
+                department: document.getElementById('departmentError'),
+            };
+            
+            const validators = {
+                name: value => value.trim() !== '',
+                email: value => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value),
+                phone: value => /^\d{10}$/.test(value.replace(/\s/g, '')),
+                department: value => value !== '',
+            };
+
+            const validateField = (fieldName) => {
+                const field = fields[fieldName];
+                const error = errorMessages[fieldName];
+                const isValid = validators[fieldName](field.value);
+
+                if (isValid) {
+                    field.classList.remove('invalid');
+                    error.classList.remove('visible');
+                } else {
+                    field.classList.add('invalid');
+                    error.classList.add('visible');
+                }
+                return isValid;
+            };
+            
+            const validateForm = () => {
+                let isFormValid = true;
+                for (const fieldName in fields) {
+                    if (!validateField(fieldName)) {
+                        isFormValid = false;
+                    }
+                }
+                submitBtn.disabled = !isFormValid;
+            };
+
+            fields.phone.addEventListener('input', (e) => {
+                let value = e.target.value.replace(/\D/g, '').substring(0, 10);
+                if (value.length > 5) {
+                    e.target.value = `${value.slice(0, 5)} ${value.slice(5)}`;
+                } else {
+                    e.target.value = value;
+                }
+            });
+
+            for (const fieldName in fields) {
+                fields[fieldName].addEventListener('input', () => {
+                    validateField(fieldName);
+                    validateForm();
+                });
+            }
+
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
+                validateForm();
+                
+                if (!submitBtn.disabled) {
+                    const formData = {
+                        name: fields.name.value.trim(),
+                        email: fields.email.value.trim(),
+                        phone: fields.phone.value.replace(/\s/g, ''),
+                        department: fields.department.value,
+                        timestamp: new Date().toISOString()
+                    };
+
+                    try {
+                        const registrations = JSON.parse(localStorage.getItem('empresarioRegistrations')) || [];
+                        registrations.push(formData);
+                        localStorage.setItem('empresarioRegistrations', JSON.stringify(registrations));
+                        console.log('Saved to localStorage:', formData);
+                    } catch (error) {
+                        console.error('Could not save to localStorage:', error);
+                    }
+
+                    document.getElementById('confirmationMessage').textContent = `Thanks for registering, ${formData.name}! We'll be in touch.`;
+                    confirmationPanel.classList.add('visible');
+                }
+            });
+        });
+    </script>
+
+</body>
+</html>
+

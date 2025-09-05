@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Growth Engine Calculator | Empresario</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* ========================== */
+        /* --- Design System --- */
+        /* ========================== */
+        :root {
+            --primary-accent: #ff6b00; /* Energetic Orange */
+            --secondary-accent: #4a90e2; /* Tech Blue */
+            --dark-bg: #0d1117;
+            --card-bg: rgba(22, 27, 34, 0.75);
+            --text-light: #e6edf3;
+            --text-muted: #8b949e;
+            --border-color: rgba(139, 148, 158, 0.3);
+            --font-family: 'Poppins', sans-serif;
+            --transition-speed: 0.4s;
+            --timing-function: cubic-bezier(0.25, 0.8, 0.25, 1);
+
+            /* Light Mode Variables */
+            --light-bg: #f0f2f5;
+            --light-card-bg: rgba(255, 255, 255, 0.7);
+            --light-text: #1c1e21;
+            --light-text-muted: #606770;
+            --light-border-color: rgba(0, 0, 0, 0.1);
+        }
+        
+        [data-theme="light"] {
+            --dark-bg: var(--light-bg);
+            --card-bg: var(--light-card-bg);
+            --text-light: var(--light-text);
+            --text-muted: var(--light-text-muted);
+            --border-color: var(--light-border-color);
+        }
+
+        /* ========================== */
+        /* --- Global & Background --- */
+        /* ========================== */
+        * {
+            margin: 0; padding: 0; box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-family);
+            background-color: var(--dark-bg);
+            color: var(--text-light);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            position: relative;
+            transition: background-color var(--transition-speed), color var(--transition-speed);
+        }
+        
+        .background-container {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            overflow: hidden; z-index: -1;
+        }
+        .background-container::before, .background-container::after {
+            content: ''; position: absolute; width: 500px; height: 500px;
+            background: radial-gradient(circle, var(--primary-accent), transparent 60%);
+            border-radius: 50%; opacity: 0.15; filter: blur(100px);
+            animation: moveGradient 20s infinite alternate;
+        }
+        .background-container::after {
+            background: radial-gradient(circle, var(--secondary-accent), transparent 60%);
+            animation-delay: -10s; animation-direction: alternate-reverse;
+        }
+
+        @keyframes moveGradient {
+            0% { transform: translate(-40vw, -40vh); }
+            100% { transform: translate(40vw, 40vh); }
+        }
+
+        /* ========================== */
+        /* --- Main Calculator Layout --- */
+        /* ========================== */
+        .app-container {
+            display: flex;
+            width: 100%;
+            max-width: 800px;
+            height: 600px;
+            max-height: 90vh;
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+            overflow: hidden;
+            transition: background-color var(--transition-speed), border var(--transition-speed);
+        }
+
+        .calculator {
+            flex-grow: 1;
+            display: grid;
+            grid-template-rows: auto 1fr;
+            padding: 20px;
+        }
+
+        /* ========================== */
+        /* --- Display --- */
+        /* ========================== */
+        .display {
+            padding: 10px 20px;
+            text-align: right;
+            word-wrap: break-word;
+            word-break: break-all;
+            position: relative;
+        }
+        .previous-operand {
+            color: var(--text-muted);
+            font-size: 1.2rem;
+            min-height: 25px;
+        }
+        .current-operand {
+            color: var(--text-light);
+            font-size: 2.5rem;
+            font-weight: 600;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.1);
+        }
+        .analyze-btn {
+            background: none; border: none;
+            color: var(--secondary-accent);
+            cursor: pointer;
+            font-family: var(--font-family);
+            font-size: 0.9rem;
+            padding: 5px;
+            position: absolute;
+            left: 20px; bottom: 0;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s var(--timing-function);
+        }
+        .analyze-btn.visible {
+            opacity: 1;
+            visibility: visible;
+            animation: pulse-glow 2s infinite;
+        }
+        .analyze-btn:hover {
+            color: #fff;
+            text-decoration: underline;
+        }
+        @keyframes pulse-glow {
+            0% { filter: drop-shadow(0 0 2px var(--secondary-accent)); }
+            50% { filter: drop-shadow(0 0 8px var(--secondary-accent)); }
+            100% { filter: drop-shadow(0 0 2px var(--secondary-accent)); }
+        }
+
+
+        /* ========================== */
+        /* --- Buttons --- */
+        /* ========================== */
+        .buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+        }
+        .btn {
+            background-image: linear-gradient(rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0));
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            color: var(--text-light);
+            font-size: 1.2rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s var(--timing-function);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        .btn:hover {
+            background-image: linear-gradient(rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+            border-color: rgba(139, 148, 158, 0.5);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+        .btn:active {
+            transform: translateY(1px);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+        }
+        .btn.operator { color: var(--primary-accent); }
+        .btn.operator.active {
+            background-color: var(--primary-accent);
+            color: #fff;
+            box-shadow: 0 0 15px rgba(255, 107, 0, 0.5);
+        }
+        .btn.function { color: var(--secondary-accent); }
+        .btn.equals {
+            grid-column: span 2;
+            background: var(--primary-accent);
+            color: #fff;
+            box-shadow: 0 0 15px rgba(255, 107, 0, 0.4);
+        }
+
+        /* ========================== */
+        /* --- History Panel --- */
+        /* ========================== */
+        .history-panel {
+            width: 280px;
+            background: rgba(0, 0, 0, 0.1);
+            border-left: 1px solid var(--border-color);
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            transform: translateX(0);
+            transition: all var(--transition-speed) var(--timing-function);
+        }
+        .history-panel.collapsed {
+            width: 0;
+            padding: 20px 0;
+            transform: translateX(20px);
+            opacity: 0;
+        }
+        .history-panel h3 {
+            color: var(--text-light);
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        .history-list {
+            list-style: none;
+            flex-grow: 1;
+            overflow-y: auto;
+        }
+        /* Custom Scrollbar */
+        .history-list::-webkit-scrollbar { width: 6px; }
+        .history-list::-webkit-scrollbar-track { background: transparent; }
+        .history-list::-webkit-scrollbar-thumb { background-color: var(--border-color); border-radius: 10px; }
+
+        .history-list li {
+            padding: 10px;
+            border-bottom: 1px solid var(--border-color);
+            text-align: right;
+            cursor: pointer;
+        }
+        .history-list li:hover { background: rgba(255,255,255,0.05); }
+        .history-list .expression { color: var(--text-muted); font-size: 0.9rem; }
+        .history-list .result { color: var(--text-light); font-weight: 600; font-size: 1.1rem;}
+
+        /* --- Toggle Buttons --- */
+        .toggle-bar {
+            position: absolute;
+            top: 20px; right: 20px;
+            display: flex; gap: 10px;
+            z-index: 10;
+        }
+        .toggle-btn {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 50%;
+            width: 40px; height: 40px;
+            color: var(--text-muted);
+            cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .toggle-btn:hover { color: var(--text-light); }
+        
+        /* --- Gemini Modal --- */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6); backdrop-filter: blur(5px);
+            display: flex; align-items: center; justify-content: center;
+            z-index: 1001; opacity: 0; visibility: hidden; transition: all 0.3s var(--timing-function);
+        }
+        .modal-overlay.visible { opacity: 1; visibility: visible; }
+        .modal {
+            background: var(--card-bg); border: 1px solid var(--border-color);
+            border-radius: 15px; padding: 30px; width: 90%; max-width: 500px;
+            position: relative;
+            transform: scale(0.95);
+            transition: all 0.3s var(--timing-function);
+        }
+        .modal-overlay.visible .modal {
+            transform: scale(1);
+        }
+        .modal-close {
+            position: absolute; top: 15px; right: 15px; background: none; border: none;
+            color: var(--text-muted); font-size: 1.5rem; cursor: pointer;
+        }
+        .modal-content h3 { color: var(--secondary-accent); margin-bottom: 10px;}
+        .loader {
+            width: 48px; height: 48px; border: 5px solid var(--border-color);
+            border-bottom-color: var(--primary-accent); border-radius: 50%;
+            display: block; margin: 20px auto;
+            animation: rotation 1s linear infinite;
+        }
+        @keyframes rotation { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        /* --- Responsive Adjustments --- */
+        @media (max-width: 768px) {
+            .app-container {
+                flex-direction: column;
+                width: 95%; max-width: 400px;
+                height: 90vh; max-height: 800px;
+            }
+            .history-panel {
+                width: 100%; height: 200px;
+                border-left: none; border-top: 1px solid var(--border-color);
+                transform: translateY(0);
+            }
+            .history-panel.collapsed {
+                height: 0; padding: 0 20px;
+                transform: translateY(0); opacity: 0;
+            }
+            .toggle-bar { top: 10px; right: 10px; }
+        }
+    </style>
+</head>
+<body data-theme="dark">
+    <div class="background-container"></div>
+
+    <!-- Toggle Buttons -->
+    <div class="toggle-bar">
+        <button class="toggle-btn" id="history-toggle" title="Toggle History">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 4h22v4H1zM1 10h22v4H1zM1 16h22v4H1z" /></svg>
+        </button>
+        <button class="toggle-btn" id="theme-toggle" title="Toggle Theme">
+             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+        </button>
+    </div>
+
+    <div class="app-container">
+        <div class="calculator">
+            <div class="display">
+                <div class="previous-operand" data-previous-operand></div>
+                <div class="current-operand" data-current-operand>0</div>
+                <button class="analyze-btn" id="analyze-btn">✨ Analyze Metric</button>
+            </div>
+            <div class="buttons">
+                <button class="btn function" data-all-clear>C</button>
+                <button class="btn function" data-operation>%</button>
+                <button class="btn function" data-operation>√</button>
+                <button class="btn operator" data-operation>÷</button>
+                <button class="btn" data-number>7</button>
+                <button class="btn" data-number>8</button>
+                <button class="btn" data-number>9</button>
+                <button class="btn operator" data-operation>×</button>
+                <button class="btn" data-number>4</button>
+                <button class="btn" data-number>5</button>
+                <button class="btn" data-number>6</button>
+                <button class="btn operator" data-operation>-</button>
+                <button class="btn" data-number>1</button>
+                <button class="btn" data-number>2</button>
+                <button class="btn" data-number>3</button>
+                <button class="btn operator" data-operation>+</button>
+                <button class="btn" data-number>0</button>
+                <button class="btn" data-number>.</button>
+                <button class="btn" data-delete>⌫</button>
+                <button class="btn equals" data-equals>=</button>
+            </div>
+        </div>
+        <div class="history-panel" id="history-panel">
+            <h3>Metric History</h3>
+            <ul class="history-list" id="history-list">
+                <!-- History items will be injected here by JS -->
+            </ul>
+        </div>
+    </div>
+    
+    <!-- Gemini Analysis Modal -->
+    <div class="modal-overlay" id="modal-overlay">
+        <div class="modal">
+            <button class="modal-close" id="modal-close">&times;</button>
+            <div class="modal-content" id="modal-content">
+                <!-- Content will be injected by JS -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // --- Gemini API Caller ---
+        const gemini = {
+            API_URL: `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=`, // Key is handled by environment
+            SYSTEM_PROMPT: "You are an encouraging startup advisor. When given a calculation and its result, briefly explain what business metric it could represent in a positive and motivational tone. Focus on metrics like LTV:CAC, ROI, Market Share, Growth Rate, etc. Keep the explanation to 2-3 concise sentences.",
+
+            async analyze(expression, result) {
+                const userQuery = `The calculation was "${expression}" which resulted in ${result}. What could this number mean for my startup?`;
+                
+                const payload = {
+                    systemInstruction: { parts: [{ text: this.SYSTEM_PROMPT }] },
+                    contents: [{ parts: [{ text: userQuery }] }],
+                };
+
+                let response;
+                try {
+                    response = await fetch(this.API_URL, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (!response.ok) {
+                       throw new Error(`API Error: ${response.status}`);
+                    }
+
+                    const data = await response.json();
+                    return data.candidates?.[0]?.content?.parts?.[0]?.text || "Sorry, I couldn't generate an analysis. Try another metric.";
+                } catch (error) {
+                    console.error("Gemini API call failed:", error);
+                    return "Analysis failed. Please check your connection and try again.";
+                }
+            }
+        };
+        
+        // --- Calculator Class ---
+        class Calculator {
+            constructor(previousOperandText, currentOperandText) {
+                this.previousOperandText = previousOperandText;
+                this.currentOperandText = currentOperandText;
+                this.history = new HistoryManager();
+                this.isResultDisplayed = false;
+                this.clear();
+            }
+
+            clear() {
+                this.currentOperand = '0';
+                this.previousOperand = '';
+                this.operation = undefined;
+                this.isResultDisplayed = false;
+                this.updateDisplay();
+            }
+
+            delete() {
+                if(this.isResultDisplayed) this.clear();
+                if (this.currentOperand.length <= 1) {
+                    this.currentOperand = '0';
+                } else {
+                    this.currentOperand = this.currentOperand.toString().slice(0, -1);
+                }
+            }
+
+            appendNumber(number) {
+                if(this.isResultDisplayed) {
+                    this.currentOperand = '';
+                    this.isResultDisplayed = false;
+                }
+                if (number === '.' && this.currentOperand.includes('.')) return;
+                if (this.currentOperand === '0' && number !== '.') {
+                    this.currentOperand = number.toString();
+                } else {
+                    this.currentOperand = this.currentOperand.toString() + number.toString();
+                }
+            }
+
+            chooseOperation(operation) {
+                if (this.currentOperand === '0' && this.previousOperand === '') return;
+                if (this.previousOperand !== '') {
+                    this.compute();
+                }
+                this.operation = operation;
+                this.previousOperand = this.currentOperand;
+                this.currentOperand = '0';
+                this.isResultDisplayed = false;
+            }
+
+            compute() {
+                let computation;
+                const prev = parseFloat(this.previousOperand);
+                const current = parseFloat(this.currentOperand);
+                if (isNaN(prev) || isNaN(current)) return;
+                const operationToCompute = this.operation;
+                
+                switch (operationToCompute) {
+                    case '+': computation = prev + current; break;
+                    case '-': computation = prev - current; break;
+                    case '×': computation = prev * current; break;
+                    case '÷':
+                        if (current === 0) {
+                            this.currentOperand = 'Error: No zero growth'; this.previousOperand = '';
+                            this.operation = undefined; this.updateDisplay(); return;
+                        }
+                        computation = prev / current;
+                        break;
+                    case '%': computation = prev % current; break;
+                    default: return;
+                }
+                
+                this.history.add(`${this.formatNumber(prev)} ${operationToCompute} ${this.formatNumber(current)}`, this.formatNumber(computation));
+                this.currentOperand = computation;
+                this.operation = undefined;
+                this.previousOperand = '';
+                this.isResultDisplayed = true;
+            }
+            
+            handleSingleOperandOps(operation){
+                let computation;
+                const current = parseFloat(this.currentOperand);
+                if(isNaN(current)) return
+                switch(operation){
+                    case '√': computation = Math.sqrt(current); break;
+                    default: return;
+                }
+                this.history.add(`√(${this.formatNumber(current)})`, this.formatNumber(computation));
+                this.currentOperand = computation;
+                this.isResultDisplayed = true;
+            }
+
+            formatNumber(number) {
+                if (typeof number === 'string' && number.startsWith('Error')) return number;
+                const stringNumber = number.toString();
+                const [integer, decimal] = stringNumber.split('.');
+                let integerDisplay = isNaN(parseFloat(integer)) ? '' : parseFloat(integer).toLocaleString('en', { maximumFractionDigits: 0 });
+                return decimal != null ? `${integerDisplay}.${decimal}` : integerDisplay;
+            }
+
+            updateDisplay() {
+                this.currentOperandText.innerText = this.formatNumber(this.currentOperand);
+                document.getElementById('analyze-btn').classList.toggle('visible', this.isResultDisplayed);
+                if (this.operation != null) {
+                    this.previousOperandText.innerText = `${this.formatNumber(this.previousOperand)} ${this.operation}`;
+                } else {
+                    this.previousOperandText.innerText = '';
+                }
+            }
+        }
+        
+        class HistoryManager {
+            constructor() {
+                this.historyList = document.getElementById('history-list');
+                this.calculations = JSON.parse(localStorage.getItem('calculatorHistory')) || [];
+                this.render();
+            }
+            add(expression, result) {
+                const calculation = { expression, result };
+                this.calculations.unshift(calculation);
+                if(this.calculations.length > 20) this.calculations.pop();
+                this.save();
+                this.render();
+                return calculation;
+            }
+            save() { localStorage.setItem('calculatorHistory', JSON.stringify(this.calculations)); }
+            render() {
+                this.historyList.innerHTML = '';
+                this.calculations.forEach(calc => {
+                    const li = document.createElement('li');
+                    li.innerHTML = `<div class="expression">${calc.expression} =</div><div class="result">${calc.result}</div>`;
+                    this.historyList.appendChild(li);
+                });
+            }
+            getLatest() { return this.calculations[0] || null; }
+        }
+
+        // --- DOM Elements & Init ---
+        const previousOperandText = document.querySelector('[data-previous-operand]');
+        const currentOperandText = document.querySelector('[data-current-operand]');
+        const calculator = new Calculator(previousOperandText, currentOperandText);
+        const modalOverlay = document.getElementById('modal-overlay');
+        const modalContent = document.getElementById('modal-content');
+
+        // --- Event Listeners ---
+        document.querySelectorAll('[data-number]').forEach(btn => {
+            btn.addEventListener('click', () => { calculator.appendNumber(btn.innerText); calculator.updateDisplay(); });
+        });
+        
+        document.querySelectorAll('[data-operation]').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const operation = btn.innerText;
+                if(operation === '√'){ calculator.handleSingleOperandOps(operation); } 
+                else { calculator.chooseOperation(operation); }
+                calculator.updateDisplay(); updateActiveOperator(btn);
+            });
+        });
+
+        document.querySelector('[data-equals]').addEventListener('click', () => { calculator.compute(); calculator.updateDisplay(); updateActiveOperator(null); });
+        document.querySelector('[data-all-clear]').addEventListener('click', () => { calculator.clear(); updateActiveOperator(null); });
+        document.querySelector('[data-delete]').addEventListener('click', () => { calculator.delete(); calculator.updateDisplay(); });
+        
+        document.addEventListener('keydown', (e) => {
+            if (e.key >= 0 && e.key <= 9 || e.key === '.') calculator.appendNumber(e.key);
+            if (e.key === 'Backspace') calculator.delete();
+            if (e.key === 'Enter' || e.key === '=') { e.preventDefault(); calculator.compute(); }
+            if(['+', '-', '*', '/', '%'].includes(e.key)){ const opMap = {'*': '×', '/': '÷'}; calculator.chooseOperation(opMap[e.key] || e.key); }
+            calculator.updateDisplay();
+        });
+        
+        // --- UI & Gemini Toggles ---
+        document.getElementById('theme-toggle').addEventListener('click', () => {
+            const currentTheme = document.body.getAttribute('data-theme');
+            document.body.setAttribute('data-theme', currentTheme === 'dark' ? 'light' : 'dark');
+        });
+        document.getElementById('history-toggle').addEventListener('click', () => {
+            document.getElementById('history-panel').classList.toggle('collapsed');
+        });
+        
+        document.getElementById('analyze-btn').addEventListener('click', async () => {
+            const lastCalc = calculator.history.getLatest();
+            if(!lastCalc) return;
+            
+            modalContent.innerHTML = `<h3>Analyzing your metric...</h3><div class="loader"></div>`;
+            modalOverlay.classList.add('visible');
+            
+            const analysis = await gemini.analyze(lastCalc.expression, lastCalc.result);
+            
+            modalContent.innerHTML = `<h3>Startup Advisor Insights</h3><p>${analysis}</p>`;
+        });
+        
+        modalOverlay.addEventListener('click', (e) => {
+            if (e.target === modalOverlay || e.target.id === 'modal-close') {
+                modalOverlay.classList.remove('visible');
+            }
+        });
+        
+        function updateActiveOperator(activeButton) {
+            document.querySelectorAll('.btn.operator').forEach(button => button.classList.remove('active'));
+            if (activeButton) activeButton.classList.add('active');
+        }
+    });
+    </script>
+</body>
+</html>
+
